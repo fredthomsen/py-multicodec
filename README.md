@@ -1,2 +1,2 @@
 # py-multicodec
-Python implementation of Juan Benet's multicodec spec https://github.com/jbenet/multicodec
+self-describing serialization.  This is a python implementation of https://github.com/jbenet/multicodec
