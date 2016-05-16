@@ -1,4 +1,4 @@
-"
+"""
 header
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -7,12 +7,12 @@ header
 
 import struct
 
-MAX_BUF_LEN = 127
+MAX_PATH_LEN = 127
 
 
 def header(path):
     path_len = len(path) + 1
-    if path_len >= 127:
+    if path_len > MAX_PATH_LEN:
         raise PathLenError
 
     buf = struct.pack('bsb', path_len, path, '\n')
@@ -30,8 +30,31 @@ def write_header(writer, path):
 
 
 def read_header(reader):
-    buf = reader.read(1)
-    buf_len = buf
+    buf_len = reader.read(1)
 
     if buf_len > 127:
-        raise
+        raise PathLenError
+
+    buf = reader.read(buf_len + 1)
+    if buf[0] == '\n':
+        raise HeaderInvalidError
+
+    return buf_len + buf
+
+
+def read_path(reader):
+    hdr = read_header(reader)
+
+    return header_path(hdr)
+
+
+def consume_path(reader, path):
+    buf = read_path(reader)
+    if path != buf:
+        raise HeaderMismatch
+
+
+def consume_header(reader, header):
+    buf = r.read(len(header))
+    if path != buf:
+        raise HeaderMismatch
