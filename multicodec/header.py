@@ -32,14 +32,14 @@ def write_header(writer, path):
 def read_header(reader):
     buf_len = reader.read(1)
 
-    if buf_len > 127:
+    if buf_len > MAX_PATH_LEN:
         raise PathLenError
 
     buf = reader.read(buf_len + 1)
     if buf[0] == '\n':
         raise HeaderInvalidError
 
-    return buf_len + buf
+    return buf
 
 
 def read_path(reader):

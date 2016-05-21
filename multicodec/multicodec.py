@@ -7,68 +7,54 @@ multicodec
 
 import argparse
 from abc import ABCMeta
-import io.BufferedWriter
-import io.BufferedReader
 
-CODECS = [
-            JSON,
-            CBOR,
-            PROTOBUF
-         ]
+import multicodec.json
+import multicodec.cbor
+import multicodec.json
+import multicodec.header
 
-def encode(codec, buf):
-    if codec not in CODECS:
-        raise InvalidCodecError
+JSON_FORMAT = 'json'
+CBOR_FORMAT = 'cbor'
+PROTOBUF_FORMAT = 'protobuf'
 
-def decode(codec, buf):
-    if codec not in CODECS:
-        raise InvalidCodecError
+CODEC_IMPLS = {
+            JSON_FORMAT: (JSON_FORMAT, multicodec.json.Encoder, multicodec.json.Decoder),
+            CBOR_FORMAT: (CBOR_FORMAT, multicodec.cbor.Encoder, multicodec.cbor.Decoder),
+            PROTOBUF_FORMAT: (PROTOBUF_FORMAT, multicodec.protobuf.Encoder, multicodec.protobuf.Decoder),
+         }
 
-class Codec(object):
-    def __init__(self):
-        self._header = None
-        self._codec = None
 
-        self._encoder = Encoder()
-        self._decoder = Decoder()
+class MultiCodec(object):
+
+    @staticmethod
+    def build(codec):
+        try:
+            codec, encoderClass, decoderClass = CODEC_IMPLS[codec]
+        except KeyError:
+            raise InvalidCodecError
+        mc = MultiCodec(codec, encoderClass, decoderClass)
+       
+    def __init__(self, codec, encoder, decoder):
+        self._codec = codec
+        self._encoder = encoder()
+        self._decoder = decoder()
 
     def encode(self, buf):
-        self._encoder(buf) 
+        return self._encoder(buf) 
 
-    def decode(self):
-        self._decoder(buf)
+    def decode(self, buf):
+        return self._decoder(buf)
 
-class Encoder(io.BufferedWriter):
-    """
-    Multicodec encoder.
-    
-    :ivar _reader: Buffered write byte stream.
-    """
 
-    __metaclass__ = ABCMeta
+def encode(codec, buf):
+    mc = Multicodec.build(codec)
+    return mc.encode(buf)
 
-    def __init__(self, writer):
-        self._writer = writer
 
-    @abstractmethod
-    def __call__(self, buf):
-        pass
-
-class Decoder(io.BufferedReader):
-    """
-    Multicodec decoder.
-    
-    :ivar _reader: Buffered read byte stream.
-    """
-
-    __metaclass__ = ABCMeta
-
-    def __init__(self, reader):
-        self._reader = reader
-
-    @abstractmethod
-    def __call__(self):
-        pass
+def decode(buf):
+    codec = str(multicodec.header.read_header(buf))
+    mc = Multicodec.build(codec)
+    return mc.decode(buf)
 
 
 def main():

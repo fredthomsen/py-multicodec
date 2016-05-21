@@ -5,6 +5,7 @@ exceptions
 
 """
 
+
 class MultiCodecException(IOError):
     """
     Base multicodec exception.
@@ -12,9 +13,20 @@ class MultiCodecException(IOError):
 
     pass
 
+
 class InvalidCodecError(MultiCodecException, NotImplementedError):
     """
-    Unimplemented codec exception.
+    Unimplemented codec error.
     """
 
     pass
+
+
+class MalformedBufferError(MultiCodecException):
+    """
+    Malformed codec buffer error.
+    """
+
+    pass
+
+
