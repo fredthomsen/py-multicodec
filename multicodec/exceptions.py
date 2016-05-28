@@ -1,8 +1,8 @@
 """
-exceptions
+multicodec.exceptions
 ~~~~~~~~~~~~~~~~~~~~~
 
-
+Classes for multicodec exceptions.
 """
 
 
@@ -30,3 +30,13 @@ class MalformedBufferError(MultiCodecException):
     pass
 
 
+class PathLenError(MultiCodecException):
+    """
+    Maximum path length exceeded.
+    """
+
+
+class InvalidHeaderError(MultiCodecException):
+    """
+    Invalid header error.
+    """
