@@ -1,19 +1,28 @@
 """
-header
+multicodec.header
 ~~~~~~~~~~~~~~~~~~~~~
 
-
+Module handles header creation, reading, and writing for multicodec buffers.
 """
 
 import struct
+from multicodec import exceptions
 
 MAX_PATH_LEN = 127
 
 
 def header(path):
+    """
+    Creates header from path.
+
+    :param path: Multicodec path.
+
+    :return: header buffer.
+    """
+
     path_len = len(path) + 1
     if path_len > MAX_PATH_LEN:
-        raise PathLenError
+        raise exceptions.PathLenError
 
     buf = struct.pack('bsb', path_len, path, '\n')
 
@@ -21,40 +30,55 @@ def header(path):
 
 
 def header_path(hdr):
-    return str(hdr)[1:].strip()
+    """
+    Removes length and whitespace and returns the header path.
+
+    :param path: Multicodec path.
+
+    :return: header buffer.
+    """
+
+    try:
+        path = hdr[1:].strip()
+    except IndexError:
+        raise exceptions.InvalidHeaderError
+
+    return path
 
 
-def write_header(writer, path):
+def write_header(buf, path):
+    """
+    Adds header to buffer.
+
+    :param buf: Buffer with no header.
+    :param path: Path to be written to header.
+
+    :return: Buffer with header.
+    """
+
     hdr = header(path)
-    return writer.write(hdr)
+    return b''.join([hdr, buf])
 
 
-def read_header(reader):
-    buf_len = reader.read(1)
+def strip_header(buf):
+    """
+    Strip header from buffer
+
+    :param buf: Multicodec buffer.
+
+    :return: Buffer without header.
+    """
+
+    try:
+        buf_len = buf[0]
+    except IndexError:
+        raise exceptions.InvalidHeaderError
 
     if buf_len > MAX_PATH_LEN:
-        raise PathLenError
+        raise exceptions.PathLenError
 
-    buf = reader.read(buf_len + 1)
+    buf = buf[1:buf_len + 1]
     if buf[0] == '\n':
-        raise HeaderInvalidError
+        raise exceptions.InvalidHeaderError
 
     return buf
-
-
-def read_path(reader):
-    hdr = read_header(reader)
-
-    return header_path(hdr)
-
-
-def consume_path(reader, path):
-    buf = read_path(reader)
-    if path != buf:
-        raise HeaderMismatch
-
-
-def consume_header(reader, header):
-    buf = r.read(len(header))
-    if path != buf:
-        raise HeaderMismatch
