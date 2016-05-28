@@ -46,7 +46,7 @@ def header_path(hdr):
     return path
 
 
-def write_header(buf, path):
+def add_header(buf, path):
     """
     Adds header to buffer.
 
@@ -60,7 +60,7 @@ def write_header(buf, path):
     return b''.join([hdr, buf])
 
 
-def strip_header(buf):
+def rm_header(buf):
     """
     Strip header from buffer
 
