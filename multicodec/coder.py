@@ -1,9 +1,12 @@
 """
-coder
+multicodec.coder
 ~~~~~~~~~~~~~~~~~~~~~
 
-
+Abstract classes defining encoder and decoder.
 """
+
+from abc import ABCMeta
+from abc import abstractmethod
 
 
 class Encoder(object):
