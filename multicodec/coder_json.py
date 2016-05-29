@@ -1,5 +1,5 @@
 """
-mutlicodec.json
+mutlicodec.coder_json
 ~~~~~~~~~~~~~~~~~~~~~
 
 JSON Multicodec encoder and decoder.
@@ -8,9 +8,9 @@ JSON Multicodec encoder and decoder.
 import json
 import copy
 
-from mutlicodec import coder
-from multicodec import header
-from multicodec import exceptions
+from . import coder
+from . import header
+from . import exceptions
 
 FORMAT = '/json/'
 DECODED_DICT_FMT = {"codec": "json", "data": ""}
@@ -54,7 +54,7 @@ class Decoder(coder.Decoder):
         """
 
         buf = header.rm_header(buf)
-        decoded = copy.deepdcopy(DECODED_DICT_FMT)
+        decoded = copy.copy(DECODED_DICT_FMT)
         decoded['data'] = buf
 
         return decoded
