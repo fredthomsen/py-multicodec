@@ -6,7 +6,7 @@ Module handles header creation, reading, and writing for multicodec buffers.
 """
 
 import struct
-from multicodec import exceptions
+from . import exceptions
 
 MAX_PATH_LEN = 127
 
@@ -24,7 +24,9 @@ def header(path):
     if path_len > MAX_PATH_LEN:
         raise exceptions.PathLenError
 
-    buf = struct.pack('bsb', path_len, path, '\n')
+    pack_str = 'b{str_len}c'.format(str_len=len(path))
+    buf = struct.pack(pack_str, path_len, *(tuple(path)))
+    buf += struct.pack('c', '\n')
 
     return buf
 
@@ -70,15 +72,16 @@ def rm_header(buf):
     """
 
     try:
-        buf_len = buf[0]
+        buf_len = struct.unpack('b', buf[0])[0]
     except IndexError:
         raise exceptions.InvalidHeaderError
 
     if buf_len > MAX_PATH_LEN:
         raise exceptions.PathLenError
 
-    buf = buf[1:buf_len + 1]
-    if buf[0] == '\n':
+    hdr = buf[1:buf_len + 1]
+    if hdr[0] == '\n':
         raise exceptions.InvalidHeaderError
+    buf = buf[buf_len + 1:]
 
     return buf
