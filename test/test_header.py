@@ -9,6 +9,7 @@ from multicodec.header import header
 from multicodec.header import header_path
 from multicodec.header import add_header
 from multicodec.header import rm_header
+from multicodec.header import get_header
 
 
 def test_header():
@@ -34,3 +35,9 @@ def test_rm_header():
     buf = b'\x07\x2f\x74\x65\x73\x74\x2f\x0a\x01\x02\x03\x04'
     expected = b'\x01\x02\x03\x04'
     assert rm_header(buf) == expected
+
+
+def test_get_header():
+    buf = b'\x07\x2f\x74\x65\x73\x74\x2f\x0a\x01\x02\x03\x04'
+    expected = b'\x74\x65\x73\x74'
+    assert get_header(buf) == expected

@@ -62,6 +62,20 @@ def add_header(buf, path):
     return b''.join([hdr, buf])
 
 
+def get_header(buf):
+    """
+    Gets header from buffer
+
+    :param buf: Multicodec buffer.
+
+    :return: Header.
+    """
+
+    hdr, data = _split_header_contents(buf)
+
+    return hdr.strip('\n').strip('/')
+
+
 def rm_header(buf):
     """
     Strip header from buffer
@@ -71,17 +85,32 @@ def rm_header(buf):
     :return: Buffer without header.
     """
 
+    hdr, data = _split_header_contents(buf)
+
+    return data
+
+
+def _split_header_contents(buf):
+    """
+    Splits buffer into header and data.
+
+    :param buf: Multicodec buffer.
+
+    :return: Header and content tuple.
+    """
+
     try:
-        buf_len = struct.unpack('b', buf[0])[0]
+        hdr_len = struct.unpack('b', buf[0])[0]
     except IndexError:
         raise exceptions.InvalidHeaderError
 
-    if buf_len > MAX_PATH_LEN:
+    if hdr_len > MAX_PATH_LEN:
         raise exceptions.PathLenError
 
-    hdr = buf[1:buf_len + 1]
+    hdr = buf[1:hdr_len + 1]
+    data = buf[hdr_len + 1:]
+
     if hdr[0] == '\n':
         raise exceptions.InvalidHeaderError
-    buf = buf[buf_len + 1:]
 
-    return buf
+    return hdr, data
