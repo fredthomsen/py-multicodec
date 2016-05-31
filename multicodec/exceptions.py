@@ -35,8 +35,12 @@ class PathLenError(MultiCodecException):
     Maximum path length exceeded.
     """
 
+    pass
+
 
 class InvalidHeaderError(MultiCodecException):
     """
     Invalid header error.
     """
+
+    pass
