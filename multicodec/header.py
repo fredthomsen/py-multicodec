@@ -25,8 +25,9 @@ def header(path):
         raise exceptions.PathLenError
 
     pack_str = 'b{str_len}c'.format(str_len=len(path))
-    buf = struct.pack(pack_str, path_len, *(tuple(path)))
-    buf += struct.pack('c', '\n')
+    byte_str_tuple = tuple([c.encode('utf-8') for c in path])
+    buf = struct.pack(pack_str, path_len, *byte_str_tuple)
+    buf += struct.pack('c', b'\n')
 
     return buf
 
