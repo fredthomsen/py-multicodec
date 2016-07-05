@@ -70,14 +70,14 @@ def get_header(buf):
 
     :param buf: Multicodec buffer.
 
-    :return: Header.
+    :return: Header as string.
     """
 
     hdr, data = _split_header_contents(buf)
     hdr = hdr.decode('utf-8')
     hdr = hdr.strip('\n').strip('/')
 
-    return hdr.encode('utf-8')
+    return hdr
 
 
 def rm_header(buf):
