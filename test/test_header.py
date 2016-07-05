@@ -39,5 +39,5 @@ def test_rm_header():
 
 def test_get_header():
     buf = b'\x07\x2f\x74\x65\x73\x74\x2f\x0a\x01\x02\x03\x04'
-    expected = b'\x74\x65\x73\x74'
+    expected = 'test'
     assert get_header(buf) == expected

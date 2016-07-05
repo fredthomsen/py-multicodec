@@ -5,6 +5,7 @@ multicodec.header
 Module handles header creation, reading, and writing for multicodec buffers.
 """
 
+import base64
 import struct
 from . import exceptions
 
@@ -25,8 +26,9 @@ def header(path):
         raise exceptions.PathLenError
 
     pack_str = 'b{str_len}c'.format(str_len=len(path))
-    buf = struct.pack(pack_str, path_len, *(tuple(path)))
-    buf += struct.pack('c', '\n')
+    byte_str_tuple = tuple([c.encode('utf-8') for c in path])
+    buf = struct.pack(pack_str, path_len, *byte_str_tuple)
+    buf += struct.pack('c', b'\n')
 
     return buf
 
@@ -68,12 +70,14 @@ def get_header(buf):
 
     :param buf: Multicodec buffer.
 
-    :return: Header.
+    :return: Header as string.
     """
 
     hdr, data = _split_header_contents(buf)
+    hdr = hdr.decode('utf-8')
+    hdr = hdr.strip('\n').strip('/')
 
-    return hdr.strip('\n').strip('/')
+    return hdr
 
 
 def rm_header(buf):
@@ -100,7 +104,7 @@ def _split_header_contents(buf):
     """
 
     try:
-        hdr_len = struct.unpack('b', buf[0])[0]
+        hdr_len = struct.unpack('b', buf[0:1])[0]
     except IndexError:
         raise exceptions.InvalidHeaderError
 
