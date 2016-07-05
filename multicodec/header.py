@@ -5,6 +5,7 @@ multicodec.header
 Module handles header creation, reading, and writing for multicodec buffers.
 """
 
+import base64
 import struct
 from . import exceptions
 
@@ -73,8 +74,10 @@ def get_header(buf):
     """
 
     hdr, data = _split_header_contents(buf)
+    hdr = hdr.decode('utf-8')
+    hdr = hdr.strip('\n').strip('/')
 
-    return hdr.strip('\n').strip('/')
+    return hdr.encode('utf-8')
 
 
 def rm_header(buf):
