@@ -35,7 +35,7 @@ class Encoder(coder.Encoder):
         except ValueError:
             raise exceptions.MalformedBufferError
 
-        encoded = header.add_header(buf, FORMAT)
+        encoded = header.add_header(buf.encode('utf-8'), FORMAT)
         return encoded
 
 
@@ -55,6 +55,6 @@ class Decoder(coder.Decoder):
 
         buf = header.rm_header(buf)
         decoded = copy.copy(DECODED_DICT_FMT)
-        decoded['data'] = buf
+        decoded['data'] = buf.decode('utf-8')
 
         return decoded
