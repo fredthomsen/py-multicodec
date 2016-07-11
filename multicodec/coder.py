@@ -2,7 +2,7 @@
 multicodec.coder
 ~~~~~~~~~~~~~~~~~~~~~
 
-Abstract classes defining encoder and decoder.
+Interfaces defining encoder and decoder.
 """
 
 from abc import ABCMeta
@@ -11,7 +11,7 @@ from abc import abstractmethod
 
 class Encoder(object):
     """
-    Multicodec encoder.
+    Multicodec encoder interface.
     """
 
     __metaclass__ = ABCMeta
@@ -23,7 +23,7 @@ class Encoder(object):
 
 class Decoder(object):
     """
-    Multicodec decoder.
+    Multicodec decoder interface.
     """
 
     __metaclass__ = ABCMeta
