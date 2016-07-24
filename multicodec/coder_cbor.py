@@ -5,11 +5,15 @@ mutlicodec.coder_cbor
 CBOR Multicodec encoder and decoder.
 """
 
+import cbor
+import copy
+
 from . import coder
 from . import header
 from . import exceptions
 
 FORMAT = '/cbor/'
+DECODED_DICT_FMT = {"codec": "cbor", "data": ""}
 
 
 class Encoder(coder.Encoder):
@@ -26,7 +30,13 @@ class Encoder(coder.Encoder):
         :return: CBOR Multicodec buffer.
         """
 
-        pass
+        try:
+            cbor.loads(buf)
+        except (ValueError, EOFError):
+            raise exceptions.MalformedBufferError
+
+        encoded = header.add_header(buf, FORMAT)
+        return encoded
 
 
 class Decoder(coder.Decoder):
@@ -43,4 +53,8 @@ class Decoder(coder.Decoder):
         :return: Dictionary containing CBOR string.
         """
 
-        pass
+        buf = header.rm_header(buf)
+        decoded = copy.copy(DECODED_DICT_FMT)
+        decoded['data'] = buf
+
+        return decoded
