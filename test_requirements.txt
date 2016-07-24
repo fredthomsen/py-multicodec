@@ -1,6 +1,6 @@
 tox
 pytest
 pytest-xdist
-pytest-cov
+pytest-cov==2.2.1
 flake8
 codecov>=1.4.0
