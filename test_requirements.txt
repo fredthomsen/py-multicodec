@@ -1,5 +1,6 @@
 tox
 cbor
+protobuf
 pytest
 pytest-xdist
 pytest-cov==2.2.1
