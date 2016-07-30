@@ -1,0 +1,5 @@
+message Multicodec {
+    required int32 codecLen = 1;
+    required string codec = 2;
+    optional string data = 3;
+}
