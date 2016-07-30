@@ -5,6 +5,8 @@ mutlicodec.coder_protobuf
 Protobuf Multicodec encoder and decoder.
 """
 
+from google import protobuf
+
 from . import coder
 from . import header
 from . import exceptions
