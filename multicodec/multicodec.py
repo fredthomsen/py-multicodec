@@ -10,18 +10,18 @@ import argparse
 from . import header
 from . import exceptions
 from . import coder_json
-#from . import coder_cbor
+from . import coder_cbor
 #from . import coder_protobuf
 
 from . import __version__
 
 JSON_FORMAT = 'json'
-#CBOR_FORMAT = 'cbor'
+CBOR_FORMAT = 'cbor'
 #PROTOBUF_FORMAT = 'protobuf'
 
 CODEC_IMPLS = {
             JSON_FORMAT: (JSON_FORMAT, coder_json.Encoder, coder_json.Decoder),
-#            CBOR_FORMAT: (CBOR_FORMAT, multicodec.cbor.Encoder, multicodec.cbor.Decoder),
+            CBOR_FORMAT: (CBOR_FORMAT, coder_cbor.Encoder, coder_cbor.Decoder),
 #            PROTOBUF_FORMAT: (PROTOBUF_FORMAT, multicodec.protobuf.Encoder, multicodec.protobuf.Decoder),
          }
 
