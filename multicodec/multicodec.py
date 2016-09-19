@@ -57,9 +57,17 @@ def encode(codec, buf):
 
 
 def decode(buf):
-    codec = str(header.get_header(buf))
-    mc = MultiCodec.build(codec)
-    return mc.decode(buf)
+
+    while buf:
+        try:
+            codec = str(header.get_header(buf))
+        except exceptions.InvalidHeaderError:
+            return buf
+        else:
+            mc = MultiCodec.build(codec)
+            buf = mc.decode(buf)
+    print buf
+    return buf
 
 
 def main():
