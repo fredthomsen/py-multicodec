@@ -5,6 +5,8 @@ mutlicodec.coder_protobuf
 Protobuf Multicodec encoder and decoder.
 """
 
+import copy
+
 from google import protobuf
 
 from . import coder
@@ -12,6 +14,7 @@ from . import header
 from . import exceptions
 
 FORMAT = '/protobuf/'
+DECODED_DICT_FMT = {"codec": "protobuf", "data": ""}
 
 
 class Encoder(coder.Encoder):
@@ -45,4 +48,8 @@ class Decoder(coder.Decoder):
         :return: Dictionary containing protobuf string.
         """
 
-        pass
+        buf = header.rm_header(buf)
+        decoded = copy.copy(DECODED_DICT_FMT)
+        decoded['data'] = buf.decode('utf-8')
+
+        return decoded
