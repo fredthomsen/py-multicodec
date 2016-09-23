@@ -38,4 +38,4 @@ def test_nested():
     json_mc_buf = encode(JSON_FORMAT, json_str)
     cbor_mc_buf = encode(CBOR_FORMAT, json_mc_buf)
 
-    assert json_str == decode(cbor_mc_buf)
+    assert {'codec': 'cbor', 'data': {'codec': 'json', 'data': '{"hello": "world"}'}} == decode(cbor_mc_buf)
