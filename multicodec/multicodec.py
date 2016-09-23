@@ -10,18 +10,19 @@ import argparse
 from . import header
 from . import exceptions
 from . import coder_json
-#from . import coder_cbor
+from . import coder_cbor
 #from . import coder_protobuf
 
 from . import __version__
 
 JSON_FORMAT = 'json'
-#CBOR_FORMAT = 'cbor'
+CBOR_FORMAT = 'cbor'
 #PROTOBUF_FORMAT = 'protobuf'
 
+# TODO: Move to metaclass for coder classes as suggested
 CODEC_IMPLS = {
             JSON_FORMAT: (JSON_FORMAT, coder_json.Encoder, coder_json.Decoder),
-#            CBOR_FORMAT: (CBOR_FORMAT, multicodec.cbor.Encoder, multicodec.cbor.Decoder),
+            CBOR_FORMAT: (CBOR_FORMAT, coder_cbor.Encoder, coder_cbor.Decoder),
 #            PROTOBUF_FORMAT: (PROTOBUF_FORMAT, multicodec.protobuf.Encoder, multicodec.protobuf.Decoder),
          }
 
@@ -57,9 +58,27 @@ def encode(codec, buf):
 
 
 def decode(buf):
-    codec = str(header.get_header(buf))
-    mc = MultiCodec.build(codec)
-    return mc.decode(buf)
+
+    codecs = []
+    done = False
+
+    while not done:
+        if type(buf) is dict:
+            buf = buf['data']
+        try:
+            codec = str(header.get_header(buf))
+            mc = MultiCodec.build(codec)
+        except (exceptions.InvalidHeaderError, exceptions.InvalidCodecError):
+            done = True
+        else:
+            codecs.append(codec)
+            buf = mc.decode(buf)
+
+    while codecs:
+        codec = codecs.pop()
+        buf = {'codec': codec, 'data': buf}
+
+    return buf
 
 
 def main():
