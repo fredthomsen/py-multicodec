@@ -6,24 +6,22 @@ Unit tests for CBOR Multicdoec encoder and decoder.
 """
 
 import cbor
+from hypothesis import strategies, given
 
 from multicodec.coder_cbor import Encoder
 from multicodec.coder_cbor import Decoder
 
+encoder = Encoder()
+decoder = Decoder()
 
-def test_encoder():
-    cbor_str = cbor.dumps({"hello": "world"})
-    cbor_encoder = Encoder()
-
-    assert cbor_encoder(cbor_str) == \
-        b'\x07\x2f\x63\x62\x6f\x72\x2f\x0a\xa1EhelloEworld'
-
-
-def test_decoder():
-    cbor_mc_buf = b'\x07\x2f\x63\x62\x6f\x72\x2f\x0a\xa1EhelloEworld'
-    cbor_decoder = Decoder()
-
-    assert cbor_decoder(cbor_mc_buf) == {
-        "codec": "cbor",
-        "data": b'\xa1EhelloEworld'
+@given(mc_dict=strategies.dictionaries(
+    keys=strategies.text(
+        alphabet='abcdefghijklmnopqrstuvwxyz1234567890',
+        min_size=10),
+    values=strategies.text(min_size=10),
+    min_size=10, max_size=30)
+)
+def test_rtt(mc_dict):
+    assert decoder(encoder(cbor.dumps(mc_dict))) == {
+            "codec": "cbor", "data": cbor.dumps(mc_dict)
     }
