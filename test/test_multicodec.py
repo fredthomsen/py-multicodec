@@ -8,19 +8,24 @@ Unit tests for multicodec.
 import cbor
 import json
 from hypothesis import strategies, given
+import pytest
 
 from multicodec.multicodec import MultiCodec
 from multicodec.multicodec import encode
 from multicodec.multicodec import decode
 from multicodec.multicodec import JSON_FORMAT, CBOR_FORMAT
-from multicodec import coder_json
+from multicodec import coder_json, coder_cbor
 
 
-def test_build():
-    json_mcoder = MultiCodec.build(JSON_FORMAT)
-    assert ((json_mcoder._codec == JSON_FORMAT) and
-            isinstance(json_mcoder._encoder, coder_json.Encoder) and
-            isinstance(json_mcoder._decoder, coder_json.Decoder))
+@pytest.mark.parametrize('mc_format, coder', [
+    (JSON_FORMAT, coder_json),
+    (CBOR_FORMAT, coder_cbor)
+    ])
+def test_build(mc_format, coder):
+    mcoder = MultiCodec.build(mc_format)
+    assert ((mcoder._codec == mc_format) and
+            isinstance(mcoder._encoder, coder.Encoder) and
+            isinstance(mcoder._decoder, coder.Decoder))
 
 mc_strategy = strategies.dictionaries(
     keys=strategies.text(
