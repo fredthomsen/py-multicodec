@@ -33,10 +33,15 @@ mc_strategy = strategies.dictionaries(
         min_size=10),
     values=strategies.text(min_size=10),
     min_size=10, max_size=30)
+
 @given(mc_dict=mc_strategy)
-def test_rtt(mc_dict):
-    assert decode(encode(JSON_FORMAT, json.dumps(mc_dict))) == {
-            "codec": "json", "data": json.dumps(mc_dict)
+@pytest.mark.parametrize('mc_format, module', [
+    (JSON_FORMAT, json),
+    (CBOR_FORMAT, cbor)
+])
+def test_rtt(mc_dict, mc_format, module):
+    assert decode(encode(mc_format, module.dumps(mc_dict))) == {
+            "codec": module.__name__, "data": module.dumps(mc_dict)
     }
 
 
