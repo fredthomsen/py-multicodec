@@ -107,8 +107,9 @@ def _split_header_contents(buf):
         hdr_len = struct.unpack('b', buf[0:1])[0]
     except IndexError:
         raise exceptions.InvalidHeaderError
-
-    if hdr_len > MAX_PATH_LEN:
+    if hdr_len < 1:
+        raise exceptions.InvalidHeaderError
+    elif hdr_len > MAX_PATH_LEN:
         raise exceptions.PathLenError
 
     hdr = buf[1:hdr_len + 1]
