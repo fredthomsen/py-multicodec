@@ -32,7 +32,7 @@ mc_strategy = strategies.dictionaries(
         alphabet='abcdefghijklmnopqrstuvwxyz1234567890',
         min_size=10),
     values=strategies.text(min_size=10),
-    average_size=15)
+    average_size=10)
 
 @given(mc_dict=mc_strategy)
 @pytest.mark.parametrize('mc_format, module', [

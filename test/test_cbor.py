@@ -19,7 +19,7 @@ decoder = Decoder()
         alphabet='abcdefghijklmnopqrstuvwxyz1234567890',
         min_size=10),
     values=strategies.text(min_size=10),
-    average_size=15)
+    average_size=10)
 )
 def test_rtt(mc_dict):
     assert decoder(encoder(cbor.dumps(mc_dict))) == {
